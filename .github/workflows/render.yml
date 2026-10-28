@@ -1,0 +1,67 @@
+name: render coin videos
+on:
+  workflow_dispatch:
+    inputs:
+      slugs: { description: "coin slugs, space separated (empty = today's list)", required: false, default: "" }
+  schedule:
+    - cron: "35 11 * * *"   # 11:35 UTC, after the 11:01 UTC daily list
+    - cron: "5 12 * * *"    # backups: GitHub schedules can run late or be skipped; each run only renders coins still missing a video
+    - cron: "35 12 * * *"
+    - cron: "35 13 * * *"
+    - cron: "35 15 * * *"
+concurrency: { group: render, cancel-in-progress: false }
+permissions: { contents: write, id-token: write }
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - name: pick coins
+        id: pick
+        run: |
+          S="${{ github.event.inputs.slugs }}"
+          if [ -z "$S" ]; then S=$(curl -fsS "https://sygil.pro/api/video-jobs?pending=1" | python -c "import sys,json;print(' '.join(json.load(sys.stdin)['slugs']))"); fi
+          echo "slugs=$S" >> "$GITHUB_OUTPUT"; echo "coins: ${S:-none, all done}"
+      - uses: actions/setup-python@v5
+        if: steps.pick.outputs.slugs != ''
+        with: { python-version: "3.11" }
+      - name: tools
+        if: steps.pick.outputs.slugs != ''
+        timeout-minutes: 8
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg fonts-noto-color-emoji > /dev/null
+          pip install -q numpy scipy playwright==1.47.0
+          python -m playwright install --with-deps chromium > /dev/null
+      - name: render
+        if: steps.pick.outputs.slugs != ''
+        run: |
+          mkdir -p out
+          for s in ${{ steps.pick.outputs.slugs }}; do
+            echo "::group::$s"
+            python studio/job.py "$s" "out/$s.json" && python studio/render.py "out/$s.json" "out/$s.mp4" || echo "FAILED $s"
+            echo "::endgroup::"
+          done
+          ls -la out
+      - name: upload to sygil (R2)
+        if: steps.pick.outputs.slugs != ''
+        run: |
+          TOK=$(curl -fsS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=sygil" | python -c "import sys,json;print(json.load(sys.stdin)['value'])")
+          for f in out/*.mp4; do [ -f "$f" ] || continue; s=$(basename "$f" .mp4)
+            if python -c "import json,sys;sys.exit(0 if json.load(open('out/$s.mp4.qa.json'))['ok'] else 1)"; then
+              curl -fsS -X POST -H "Authorization: Bearer $TOK" -H "content-type: video/mp4" --data-binary "@$f" "https://sygil.pro/api/video-upload?slug=$s" && echo " uploaded $s"
+            else echo "QA failed, not uploaded: $s"; cat "out/$s.mp4.qa.json"; fi
+          done
+      - uses: actions/upload-artifact@v4
+        if: steps.pick.outputs.slugs != ''
+        with:
+          name: videos
+          path: |
+            out/*.mp4
+            out/*.qa.json
+          retention-days: 7
+      - name: keep latest videos on the 'videos' branch (for review)
+        if: steps.pick.outputs.slugs != ''
+        run: |
+          cd out && git init -q && git checkout -q -b videos && git add *.mp4 *.qa.json 2>/dev/null || true
+          git -c user.name=sygil -c user.email=bot@sygil.pro commit -qm "videos $(date -u +%F)" && git push -fq "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" videos
