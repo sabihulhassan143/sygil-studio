@@ -176,6 +176,8 @@ const V = Object.assign({
   cap: pickV(['top', 'center', 'band'], 'cap'), bg: pickV(['grid', 'dots', 'rays', 'stripes'], 'bg'), font: HASH(SEED + '|font') % FONTSETS[fam].length, mood: pickV(MOODS[fam], 'mood'),
 }, D.variant || {});
 if (V.hook === 'counter' && !(D.mc > 0)) V.hook = 'ring';
+if (D.cut === 'milestone' && D.milestone > 0) { V.hook = 'counter'; F.kick = D.milestone.toLocaleString('en-US') + ' holders strong'; } // Legend milestone video
+V.cut = D.cut || 'launch';
 const FS = F.concept && F.fonts && F.head ? [F.fonts.split('&family=')[0], F.head] : FONTSETS[fam][V.font] || FONTSETS[fam][0]; // Forge/Legend: the concept's own font
 F.head = FS[1];
 window.VARIANT = V;
@@ -200,7 +202,7 @@ const num = n => n == null ? '—' : n.toLocaleString('en-US');
 q('.lgi').forEach(e => e.style.backgroundImage = D.logo ? `url("${D.logo}")` : 'none');
 q('.nm').forEach(e => e.textContent = D.name || D.symbol);
 const rk = F.ranks, rank = rk[3], ex = 'WALLET 7XKP…Q3MD';
-$('kick1').textContent = F.kick; $('name1').textContent = D.name || D.symbol; $('sub1').textContent = T + ' ' + F.crew + ', you have an HQ';
+$('kick1').textContent = F.kick; $('name1').textContent = D.name || D.symbol; $('sub1').textContent = D.cut === 'milestone' ? 'thank you, ' + F.crew : T + ' ' + F.crew + ', you have an HQ';
 $('mk').textContent = F.kick + ' · ' + T; $('mlead').textContent = D.desc || `the home of the ${T} ${F.crew}. rank cards, levels and live stats.`; $('mcta').textContent = F.cta; $('mcta2').textContent = F.cta;
 $('mmc').textContent = fmt(D.mc); $('mvol').textContent = fmt(D.vol); $('mliq').textContent = fmt(D.liq); $('mhold').textContent = num(D.holders);
 $('mlvt').textContent = F.lvTitle; $('mtool').textContent = F.tool;
@@ -238,19 +240,18 @@ function caption(t, a, b, k, l1, l2, stepN) {
   const s = $('step'); if (stepN) { const p = seg(t, a, a + .3); s.textContent = stepN; s.style.opacity = o * p; s.style.transform = `scale(${lerp(.4, 1, eBack(p))})`; s.style.display = 'inline-flex'; } else s.style.display = 'none';
   return true;
 }
-const TOTAL = 23;
-window.DURATION = TOTAL;
 // key moments for the sound engine (kept few on purpose)
 // scene blocks in 'original' time; the variant decides their order on screen
-const BLOCKS = { hook: [0, 3.0], how: [3.0, 16.1], why: [16.1, 20.2], end: [20.2, 23] };
-const ORDER = V.order === 'why' ? ['hook', 'why', 'how', 'end'] : ['hook', 'how', 'why', 'end'];
+const BLOCKS = { hook: [0, 3.0], how: [3.0, 16.1], why: [16.1, 20.2], end: [20.2, 23], card: [10.6, 13.75] };
+const ORDER = D.cut === 'teaser' ? ['hook', 'card', 'end'] : D.cut === 'milestone' ? ['hook', 'why', 'end'] : V.order === 'why' ? ['hook', 'why', 'how', 'end'] : ['hook', 'how', 'why', 'end'];
 const PLAN = []; { let o = 0; for (const k of ORDER) { const [a, b] = BLOCKS[k]; PLAN.push({ k, a, b, o }); o += b - a; } }
 const JOINS = PLAN.slice(1).map(p => p.o); // output times where one block cuts to the next
+window.DURATION = +PLAN.reduce((n, p) => n + p.b - p.a, 0).toFixed(2); // launch 23s · teaser ~8.9s · milestone ~9.9s
 const toOrig = t => { const p = [...PLAN].reverse().find(p => t >= p.o) || PLAN[0]; return { blk: p.k, o: p.a + (t - p.o) }; };
 const toOut = o => { const p = PLAN.find(p => o >= p.a && o < p.b) || PLAN[PLAN.length - 1]; return p.o + (o - p.a); };
 // key moments for the sound engine (kept few on purpose), mapped to the variant's order
 window.CUES = [{ t: 1.0, k: 'impact' }, { t: 8.0, k: 'tick' }, { t: 10.4, k: 'whoosh' }, { t: 11.15, k: 'flip' }, { t: 13.6, k: 'pop' }, { t: 18.9, k: 'ding' }, { t: 20.3, k: 'impact' }]
-  .map(c => ({ t: +toOut(c.t).toFixed(3), k: c.k })).concat(JOINS.slice(0, -1).map(j => ({ t: +(j - .15).toFixed(3), k: 'whoosh' }))).sort((a, b) => a.t - b.t);
+  .filter(c => PLAN.some(p => c.t >= p.a && c.t < p.b)).map(c => ({ t: +toOut(c.t).toFixed(3), k: c.k })).concat(JOINS.slice(0, -1).map(j => ({ t: +(j - .15).toFixed(3), k: 'whoosh' }))).sort((a, b) => a.t - b.t);
 window.seek = function (tOut) {
   const { blk, o: t } = toOrig(tOut);
   // transition at every cut (style per coin)
@@ -271,7 +272,7 @@ window.seek = function (tOut) {
     const kp = seg(t, .1, .9), kt = F.kick.toUpperCase();
     if (V.hook === 'counter') { // market cap counts up, then the logo lands
       $('kick1').textContent = kt; $('kick1').style.opacity = seg(t, .9, 1.2);
-      $('cnt1').innerHTML = fmt(D.mc * eExpo(seg(t, .05, .8))) + '<small>market cap</small>'; $('cnt1').style.opacity = 1 - seg(t, .8, .95);
+      const ms = D.cut === 'milestone' && D.milestone > 0; $('cnt1').innerHTML = (ms ? Math.round(D.milestone * eExpo(seg(t, .05, .8))).toLocaleString('en-US') : fmt(D.mc * eExpo(seg(t, .05, .8)))) + (ms ? '<small>holders</small>' : '<small>market cap</small>'); $('cnt1').style.opacity = 1 - seg(t, .8, .95);
       $('cnt1').style.transform = `scale(${lerp(.8, 1, eOut(seg(t, .05, .35))) + seg(t, .8, .95) * .3})`;
     } else { $('kick1').style.opacity = 1; $('kick1').textContent = kt.slice(0, Math.floor(kp * kt.length)); $('cnt1').style.opacity = 0; }
     const lp = seg(t, .85, 1.15);
@@ -300,7 +301,7 @@ window.seek = function (tOut) {
   caption(t, 3.3, 5.3, 'built for the holders', T + ' now', 'has an HQ', 0) ||
   caption(t, 5.3, 7.6, 'live, from the chain', 'real stats.', 'real levels.', 0) ||
   caption(t, 7.6, 10.4, 'step one', 'paste your', 'wallet', '1') ||
-  caption(t, 10.4, 13.4, 'step two', 'get your rank', 'from real buys', '2') ||
+  caption(t, 10.4, 13.4, D.cut === 'teaser' ? 'now live · ' + T : 'step two', 'get your rank', 'from real buys', D.cut === 'teaser' ? 0 : '2') ||
   caption(t, 13.4, 16.0, 'step three', 'post your', 'card', '3') ||
   (blk === 'why' && caption(t, 16.0, 20.2, 'why it grows ' + T, 'holders stay.', 'and spread it.', 0)) ||
   (() => { ['ck', 'cl1', 'cl2', 'step'].forEach(i => $(i).style.opacity = 0); })();

@@ -22,7 +22,7 @@ async def frames():
         dur = await pg.evaluate('window.DURATION'); cues = await pg.evaluate('window.CUES'); variant = await pg.evaluate('window.VARIANT || {}')
         # QA: nothing may overflow the 1080px frame at its key moments
         qa = []
-        for t in (2.2, 4.5, 6.5, 9.0, 12.0, 15.0, 17.5, 19.2, 21.5):
+        for t in [x for x in (2.2, 4.5, 6.5, 9.0, 12.0, 15.0, 17.5, 19.2, 21.5) if x < dur - .3] + [round(dur - .6, 2)]:  # only moments inside this cut (teaser/milestone are shorter) + the end screen
             await pg.evaluate(f'seek({t})')
             bad = await pg.evaluate('''[...document.querySelectorAll('#cap .l,#name1,#ename,#eurl,.why b,#post .tx')].filter(e=>getComputedStyle(e).opacity>.05).filter(e=>{const r=e.getBoundingClientRect();return r.right>1082||r.left<-2||e.scrollWidth>e.clientWidth+4}).map(e=>e.id||e.className)''')
             if bad: qa.append({'t': t, 'overflow': bad})

@@ -39,7 +39,8 @@ jobs:
           mkdir -p out
           for s in ${{ steps.pick.outputs.slugs }}; do
             echo "::group::$s"
-            python studio/job.py "$s" "out/$s.json" && python studio/render.py "out/$s.json" "out/$s.mp4" || echo "FAILED $s"
+            f="${s/:/__}"  # slug:teaser → slug__teaser (artifact names can't contain ":")
+            python studio/job.py "$s" "out/$f.json" && python studio/render.py "out/$f.json" "out/$f.mp4" || echo "FAILED $s"
             echo "::endgroup::"
           done
           ls -la out
@@ -49,7 +50,8 @@ jobs:
           TOK=$(curl -fsS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=sygil" | python -c "import sys,json;print(json.load(sys.stdin)['value'])")
           for f in out/*.mp4; do [ -f "$f" ] || continue; s=$(basename "$f" .mp4)
             if python -c "import json,sys;sys.exit(0 if json.load(open('out/$s.mp4.qa.json'))['ok'] else 1)"; then
-              curl -fsS -X POST -H "Authorization: Bearer $TOK" -H "content-type: video/mp4" --data-binary "@$f" "https://sygil.pro/api/video-upload?slug=$s" && echo " uploaded $s"
+              SL="${s%%__*}"; CUT=""; case "$s" in *__*) CUT="${s#*__}";; esac
+              curl -fsS -X POST -H "Authorization: Bearer $TOK" -H "content-type: video/mp4" --data-binary "@$f" "https://sygil.pro/api/video-upload?slug=$SL${CUT:+&cut=$CUT}" && echo " uploaded $s"
             else echo "QA failed, not uploaded: $s"; cat "out/$s.mp4.qa.json"; fi
           done
       - uses: actions/upload-artifact@v4

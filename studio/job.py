@@ -1,9 +1,10 @@
 """Fetch a render job from sygil-sites and embed the logo as a data URL (so the page never needs the network for it)."""
 import base64, json, sys, urllib.request
-slug, out = sys.argv[1], sys.argv[2]
+tok, out = sys.argv[1], sys.argv[2]
+slug, _, cut = tok.partition(':')  # 'slug' = launch video, 'slug:teaser' / 'slug:milestone' = Legend video pack
 UA = {'user-agent': 'sygil-studio/1.0'}
 def get(u): return urllib.request.urlopen(urllib.request.Request(u, headers=UA), timeout=30).read()
-job = json.loads(get(f'https://sygil.pro/api/video-job?slug={slug}'))
+job = json.loads(get(f'https://sygil.pro/api/video-job?slug={slug}' + (f'&cut={cut}' if cut else '')))
 if job.get('error'): sys.exit(f'{slug}: {job["error"]}')
 if job.get('logoUrl'):
     import time
@@ -16,4 +17,4 @@ if job.get('logoUrl'):
         time.sleep(10 * (attempt + 1))
     if not job.get('logo'):  # never publish a video without the coin's logo: skip now, a later run retries
         sys.exit(f'{slug}: logo not reachable, skipped (will retry next run)')
-json.dump(job, open(out, 'w')); print('job ok', slug, job.get('family'))
+json.dump(job, open(out, 'w')); print('job ok', tok, job.get('family'))
