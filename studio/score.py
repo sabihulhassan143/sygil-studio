@@ -1,5 +1,5 @@
 """Mood-matched synth score + few soft SFX on the video's key moments (cues), written as a 48k stereo wav.
-usage: python3 score.py out.wav mood seconds cues.json
+usage: python3 score.py out.wav mood seconds cues.json [seed]
 Rules: music picked by project mood, music never overpowers, SFX are subtle accents 8-12 dB under the music peak,
 only on 3-5 key moments, final loudness is normalized later by ffmpeg (-14 LUFS, TP -1.5)."""
 import json, sys, wave
@@ -7,9 +7,11 @@ import numpy as np
 
 SR = 48000
 out, mood, DUR, cues = sys.argv[1], sys.argv[2], float(sys.argv[3]), json.load(open(sys.argv[4]))
+import zlib
+SEED = zlib.crc32((sys.argv[5] if len(sys.argv) > 5 else mood).encode())  # stable per coin (python's hash() changes every run)
 N = int(SR * DUR)
 L = np.zeros(N); R = np.zeros(N)
-rng = np.random.default_rng(abs(hash(mood)) % 2**32)
+rng = np.random.default_rng(SEED)
 
 def add(sig, at, g=1.0, pan=0.0, bus=None):
     i = int(at * SR)
@@ -59,8 +61,19 @@ MOODS = {  # bpm, root, progression (semitones from root), kit, pad wave, lead w
   'synthwave':dict(bpm=104, root=45, prog=[[0, 3, 7], [-4, 0, 3], [3, 7, 10], [-2, 2, 5]], kit='wave', padk='saw', lead='saw'),
   'jpop':     dict(bpm=128, root=62, prog=[[0, 4, 7], [-3, 0, 4], [5, 9, 12], [7, 11, 14]], kit='pop', padk='tri', lead='sq'),
   'trap':     dict(bpm=140, root=46, prog=[[0, 3, 7], [-4, 0, 3], [-2, 2, 5], [0, 3, 7]], kit='trap', padk='saw', lead='sq'),
+  'chill':    dict(bpm=84, root=57, prog=[[0, 4, 7, 11], [-3, 0, 4, 7], [2, 5, 9, 12], [-5, -1, 2, 5]], kit='lofi', padk='tri', lead='sine'),
 }
-M = MOODS.get(mood, MOODS['trap']); beat = 60 / M['bpm']; bar = beat * 4
+ALT = {  # a second progression per mood, picked per coin
+  'military': [[0, 3, 7], [-2, 2, 5], [-4, 0, 3], [-5, -2, 2]], 'playful': [[0, 4, 7], [5, 9, 12], [7, 11, 14], [0, 4, 7]],
+  'spooky': [[0, 3, 7], [-2, 1, 5], [-4, -1, 3], [1, 4, 8]], 'luxury': [[0, 4, 7, 11], [5, 9, 12, 16], [2, 5, 9, 12], [-5, -1, 2, 7]],
+  'synthwave': [[0, 3, 7], [3, 7, 10], [-2, 2, 5], [-4, 0, 3]], 'jpop': [[5, 9, 12], [7, 11, 14], [4, 7, 11], [9, 12, 16]],
+  'trap': [[0, 3, 7], [1, 4, 8], [-2, 1, 5], [0, 3, 7]], 'chill': [[2, 5, 9, 12], [7, 11, 14, 17], [0, 4, 7, 11], [-3, 0, 4, 7]] }
+M = dict(MOODS.get(mood, MOODS['trap'])); mood = mood if mood in MOODS else 'trap'
+vr = np.random.default_rng(SEED ^ 0x5157)  # musical variation per coin: tempo, key, progression
+M['bpm'] = int(M['bpm'] + vr.integers(-6, 7)); M['root'] = int(M['root'] + vr.choice([-2, 0, 0, 2, 3]))
+if vr.random() < .5: M['prog'] = ALT[mood]
+rot = int(vr.integers(0, 4)); M['prog'] = M['prog'][rot:] + M['prog'][:rot]
+beat = 60 / M['bpm']; bar = beat * 4
 start = 1.0  # music drop lands on the logo slam
 mus = (np.zeros(N), np.zeros(N))
 # intro (0-1s): soft riser into the drop
@@ -77,14 +90,16 @@ while t < end_music:
         if bt >= end_music: break
         k = M['kit']
         if k in ('house', 'pop', 'wave'): add(kick(), bt, .9, 0, mus)
+        elif k == 'lofi':
+            if b in (0, 2) or (b == 3 and bi % 2): add(kick(1, .2), bt + (beat / 2 if b == 3 else 0), .7, 0, mus)
         elif k == 'trap':
             if b in (0, 2): add(kick(1, .35), bt + (beat * .75 if b == 2 and bi % 2 else 0), 1.0, 0, mus)
         elif k in ('cine', 'dark'):
             if b in (0, 2) or (k == 'cine' and b == 3): add(kick(1, .22), bt, .9, 0, mus)
             if k == 'cine' and b == 3: add(tom(110), bt + beat / 2, .35, .2, mus)
-        if b in (1, 3): add(clap() if k in ('pop', 'trap', 'house') else snare(), bt, .45 if k != 'dark' else .25, 0, mus)
+        if b in (1, 3): add(clap() if k in ('pop', 'trap', 'house') else snare(), bt, .45 if k not in ('dark', 'lofi') else (.25 if k == 'dark' else .2), 0, mus)
         steps = 4 if k == 'trap' else 2
-        for h in range(steps): add(hat(1, k == 'house' and h == 1), bt + h * beat / steps, .5 if k != 'dark' else .2, .25 * ((h % 2) * 2 - 1), mus)
+        for h in range(steps): add(hat(1, k == 'house' and h == 1), bt + h * beat / steps + (beat * .08 if k == 'lofi' and h % 2 else 0), .5 if k not in ('dark', 'lofi') else .2, .25 * ((h % 2) * 2 - 1), mus)
         if M['lead'] and bi >= 1:
             arp = [r + 24 + c for c in ch] + [r + 36 + ch[0]]
             for s8 in range(2): add(lp(pluck(arp[(b * 2 + s8) % len(arp)], .3, M['lead']), .3), bt + s8 * beat / 2, .22, .3 * (s8 * 2 - 1), mus)

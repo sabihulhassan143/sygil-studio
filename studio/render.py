@@ -8,7 +8,7 @@ job_path, out = sys.argv[1], sys.argv[2]
 FPS = int(sys.argv[sys.argv.index('--fps') + 1]) if '--fps' in sys.argv else 30
 STILLS = '--stills' in sys.argv
 job = json.load(open(job_path))
-MOOD = {'war': 'military', 'cat': 'playful', 'dog': 'playful', 'frog': 'playful', 'spooky': 'spooky', 'luxe': 'luxury',
+FALLBACK_MOOD = {'war': 'military', 'cat': 'playful', 'dog': 'playful', 'frog': 'playful', 'spooky': 'spooky', 'luxe': 'luxury',
         'retro': 'synthwave', 'space': 'synthwave', 'anime': 'jpop'}.get(job.get('family'), 'trap')
 
 async def frames():
@@ -19,7 +19,7 @@ async def frames():
         await pg.add_init_script('window.DATA = ' + json.dumps(job) + ';')
         await pg.goto((HERE / 'coin.html').as_uri())
         await pg.wait_for_function('window.READY === true', timeout=60000)
-        dur = await pg.evaluate('window.DURATION'); cues = await pg.evaluate('window.CUES')
+        dur = await pg.evaluate('window.DURATION'); cues = await pg.evaluate('window.CUES'); variant = await pg.evaluate('window.VARIANT || {}')
         # QA: nothing may overflow the 1080px frame at its key moments
         qa = []
         for t in (2.2, 4.5, 6.5, 9.0, 12.0, 15.0, 17.5, 19.2, 21.5):
@@ -29,7 +29,7 @@ async def frames():
         if STILLS:
             for t in (1.6, 4.5, 6.5, 9.2, 12.0, 15.0, 19.2, 21.8):
                 await pg.evaluate(f'seek({t})'); await pg.screenshot(path=f'{out}-{t:05.2f}.jpg', type='jpeg', quality=82)
-            await b.close(); return dur, cues, qa, errs
+            await b.close(); return dur, cues, qa, errs, variant
         cmd = ['ffmpeg', '-y', '-loglevel', 'error', '-f', 'image2pipe', '-framerate', str(FPS), '-c:v', 'mjpeg', '-i', '-',
                '-c:v', 'libx264', '-preset', 'veryfast', '-crf', '18', '-pix_fmt', 'yuv420p', '-movflags', '+faststart', out + '.video.mp4']
         ff = subprocess.Popen(cmd, stdin=subprocess.PIPE); n = int(FPS * dur); t0 = time.time()
@@ -37,13 +37,14 @@ async def frames():
             await pg.evaluate(f'seek({i / FPS})'); ff.stdin.write(await pg.screenshot(type='jpeg', quality=92))
             if i % 90 == 0: print(f'frame {i}/{n} {time.time() - t0:.0f}s', flush=True)
         ff.stdin.close(); ff.wait(); await b.close()
-        return dur, cues, qa, errs
+        return dur, cues, qa, errs, variant
 
-dur, cues, qa, errs = asyncio.run(frames())
-report = {'slug': job.get('slug'), 'mood': MOOD, 'qa_overflow': qa, 'page_errors': errs}
+dur, cues, qa, errs, variant = asyncio.run(frames())
+MOOD = variant.get('mood') or FALLBACK_MOOD
+report = {'slug': job.get('slug'), 'mood': MOOD, 'variant': variant, 'qa_overflow': qa, 'page_errors': errs}
 if not STILLS:
     json.dump(cues, open(out + '.cues.json', 'w'))
-    subprocess.run([sys.executable, str(HERE / 'score.py'), out + '.wav', MOOD, str(dur), out + '.cues.json'], check=True)
+    subprocess.run([sys.executable, str(HERE / 'score.py'), out + '.wav', MOOD, str(dur), out + '.cues.json', str(job.get('slug') or job.get('symbol') or 'coin')], check=True)
     subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-i', out + '.video.mp4', '-i', out + '.wav', '-c:v', 'copy',
                     '-af', 'loudnorm=I=-14:TP=-1.5:LRA=11', '-c:a', 'aac', '-b:a', '192k', '-ar', '48000', '-shortest', '-movflags', '+faststart', out], check=True)
     # QA: loudness + black frames
