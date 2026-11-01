@@ -176,7 +176,7 @@ const V = Object.assign({
   cap: pickV(['top', 'center', 'band'], 'cap'), bg: pickV(['grid', 'dots', 'rays', 'stripes'], 'bg'), font: HASH(SEED + '|font') % FONTSETS[fam].length, mood: pickV(MOODS[fam], 'mood'),
 }, D.variant || {});
 if (V.hook === 'counter' && !(D.mc > 0)) V.hook = 'ring';
-const FS = FONTSETS[fam][V.font] || FONTSETS[fam][0];
+const FS = F.concept && F.fonts && F.head ? [F.fonts.split('&family=')[0], F.head] : FONTSETS[fam][V.font] || FONTSETS[fam][0]; // Forge/Legend: the concept's own font
 F.head = FS[1];
 window.VARIANT = V;
 document.getElementById('v').classList.add('bg-' + V.bg, 'cap-' + V.cap);
