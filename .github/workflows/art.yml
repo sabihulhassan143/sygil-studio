@@ -1,0 +1,22 @@
+name: draw coin art
+# fast artwork route for Forge/Legend (11-02): started by the scanner right after a concept is made.
+# holds the connection to sygil.pro/api/art-run open while the drawing is made (a few minutes). no secrets here: GitHub OIDC proves who calls.
+on:
+  workflow_dispatch:
+    inputs:
+      slug: { description: "coin slug", required: true }
+concurrency: { group: "art-${{ github.event.inputs.slug }}", cancel-in-progress: false }
+permissions: { id-token: write }
+jobs:
+  art:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: draw
+        env: { SLUG: "${{ github.event.inputs.slug }}" }
+        run: |
+          echo "$SLUG" | grep -Eq '^[a-z0-9-]{1,40}$' || { echo "bad slug"; exit 1; }
+          TOK=$(curl -fsS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=sygil" | python3 -c "import sys,json;print(json.load(sys.stdin)['value'])")
+          OUT=$(curl -sS -N --max-time 1680 -X POST -H "Authorization: Bearer $TOK" "https://sygil.pro/api/art-run?slug=$SLUG" | tr -d '.' | sed '/^$/d')
+          echo "$OUT"
+          echo "$OUT" | tail -1 | grep -Eq '^(ok|nothing to draw|already drawing)' || { echo "::warning::art not made, the batch fallback will retry"; exit 1; }
