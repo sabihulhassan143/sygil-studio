@@ -19,4 +19,4 @@ jobs:
           TOK=$(curl -fsS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=sygil" | python3 -c "import sys,json;print(json.load(sys.stdin)['value'])")
           OUT=$(curl -sS -N --max-time 1680 -X POST -H "Authorization: Bearer $TOK" "https://sygil.pro/api/art-run?slug=$SLUG" | tr -d '.' | sed '/^$/d')
           echo "$OUT"
-          echo "$OUT" | tail -1 | grep -Eq '^(ok|nothing to draw|already drawing)' || { echo "::warning::art not made, the batch fallback will retry"; exit 1; }
+          echo "$OUT" | tail -1 | grep -Eq '^(ok|nothing to draw|already drawing)' || echo "::notice::art not made on this try, Sygil retries automatically"
