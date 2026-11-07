@@ -1,0 +1,20 @@
+{
+ "slug": "stm-c89a",
+ "mood": "trap",
+ "variant": {
+  "order": "why",
+  "hook": "ring",
+  "trans": "glitch",
+  "cap": "top",
+  "bg": "grid",
+  "font": 4,
+  "mood": "trap",
+  "cut": "launch"
+ },
+ "qa_overflow": [],
+ "page_errors": [],
+ "lufs": "-14.3",
+ "black_segments": 0,
+ "bytes": 7342439,
+ "ok": true
+}

@@ -1,0 +1,21 @@
+{
+ "slug": "rex",
+ "mood": "military",
+ "variant": {
+  "order": "how",
+  "hook": "counter",
+  "trans": "punch",
+  "cap": "top",
+  "bg": "stripes",
+  "font": 1,
+  "mood": "military",
+  "cut": "launch",
+  "ac": "hsl(117 66% 51%)"
+ },
+ "qa_overflow": [],
+ "page_errors": [],
+ "lufs": "-14.2",
+ "black_segments": 0,
+ "bytes": 8386587,
+ "ok": true
+}

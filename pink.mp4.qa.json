@@ -1,0 +1,21 @@
+{
+ "slug": "pink",
+ "mood": "trap",
+ "variant": {
+  "order": "why",
+  "hook": "ring",
+  "trans": "glitch",
+  "cap": "top",
+  "bg": "grid",
+  "font": 1,
+  "mood": "trap",
+  "cut": "launch",
+  "ac": "hsl(329 90% 53%)"
+ },
+ "qa_overflow": [],
+ "page_errors": [],
+ "lufs": "-14.3",
+ "black_segments": 0,
+ "bytes": 7290741,
+ "ok": true
+}

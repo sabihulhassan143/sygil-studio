@@ -1,0 +1,21 @@
+{
+ "slug": "rari",
+ "mood": "trap",
+ "variant": {
+  "order": "why",
+  "hook": "ring",
+  "trans": "glitch",
+  "cap": "center",
+  "bg": "grid",
+  "font": 1,
+  "mood": "trap",
+  "cut": "launch",
+  "ac": "hsl(1 89% 45%)"
+ },
+ "qa_overflow": [],
+ "page_errors": [],
+ "lufs": "-14.2",
+ "black_segments": 0,
+ "bytes": 8142526,
+ "ok": true
+}

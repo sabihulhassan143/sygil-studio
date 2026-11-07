@@ -1,0 +1,21 @@
+{
+ "slug": "allinu",
+ "mood": "trap",
+ "variant": {
+  "order": "how",
+  "hook": "split",
+  "trans": "flash",
+  "cap": "top",
+  "bg": "dots",
+  "font": 3,
+  "mood": "trap",
+  "cut": "launch",
+  "ac": "hsl(37 76% 50%)"
+ },
+ "qa_overflow": [],
+ "page_errors": [],
+ "lufs": "-14.2",
+ "black_segments": 0,
+ "bytes": 8352590,
+ "ok": true
+}

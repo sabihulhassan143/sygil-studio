@@ -1,0 +1,20 @@
+{
+ "slug": "gato-55a3",
+ "mood": "luxury",
+ "variant": {
+  "order": "why",
+  "hook": "ring",
+  "trans": "glitch",
+  "cap": "center",
+  "bg": "grid",
+  "font": 1,
+  "mood": "luxury",
+  "cut": "launch"
+ },
+ "qa_overflow": [],
+ "page_errors": [],
+ "lufs": "-14.3",
+ "black_segments": 0,
+ "bytes": 7938669,
+ "ok": true
+}

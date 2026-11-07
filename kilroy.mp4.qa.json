@@ -1,0 +1,20 @@
+{
+ "slug": "kilroy",
+ "mood": "trap",
+ "variant": {
+  "order": "why",
+  "hook": "stamp",
+  "trans": "wipe",
+  "cap": "top",
+  "bg": "rays",
+  "font": 1,
+  "mood": "trap",
+  "cut": "launch"
+ },
+ "qa_overflow": [],
+ "page_errors": [],
+ "lufs": "-14.2",
+ "black_segments": 0,
+ "bytes": 9435896,
+ "ok": true
+}

@@ -1,0 +1,21 @@
+{
+ "slug": "meme",
+ "mood": "military",
+ "variant": {
+  "order": "why",
+  "hook": "ring",
+  "trans": "glitch",
+  "cap": "band",
+  "bg": "grid",
+  "font": 3,
+  "mood": "military",
+  "cut": "launch",
+  "ac": "hsl(20 73% 45%)"
+ },
+ "qa_overflow": [],
+ "page_errors": [],
+ "lufs": "-14.3",
+ "black_segments": 0,
+ "bytes": 7836064,
+ "ok": true
+}

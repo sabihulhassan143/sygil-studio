@@ -1,0 +1,20 @@
+{
+ "slug": "batcat",
+ "mood": "jpop",
+ "variant": {
+  "order": "how",
+  "hook": "counter",
+  "trans": "punch",
+  "cap": "top",
+  "bg": "stripes",
+  "font": 1,
+  "mood": "jpop",
+  "cut": "launch"
+ },
+ "qa_overflow": [],
+ "page_errors": [],
+ "lufs": "-14.1",
+ "black_segments": 0,
+ "bytes": 9855272,
+ "ok": true
+}

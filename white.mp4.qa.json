@@ -1,0 +1,20 @@
+{
+ "slug": "white",
+ "mood": "trap",
+ "variant": {
+  "order": "how",
+  "hook": "split",
+  "trans": "flash",
+  "cap": "center",
+  "bg": "dots",
+  "font": 4,
+  "mood": "trap",
+  "cut": "launch"
+ },
+ "qa_overflow": [],
+ "page_errors": [],
+ "lufs": "-14.0",
+ "black_segments": 0,
+ "bytes": 7120286,
+ "ok": true
+}

@@ -1,0 +1,21 @@
+{
+ "slug": "fuse",
+ "mood": "trap",
+ "variant": {
+  "order": "how",
+  "hook": "counter",
+  "trans": "punch",
+  "cap": "center",
+  "bg": "stripes",
+  "font": 1,
+  "mood": "trap",
+  "cut": "launch",
+  "ac": "hsl(198 62% 62%)"
+ },
+ "qa_overflow": [],
+ "page_errors": [],
+ "lufs": "-14.2",
+ "black_segments": 0,
+ "bytes": 8019095,
+ "ok": true
+}
