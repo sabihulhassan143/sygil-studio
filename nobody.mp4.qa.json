@@ -1,0 +1,28 @@
+{
+ "slug": "nobody",
+ "mood": "luxury",
+ "variant": {
+  "order": "how",
+  "hook": "split",
+  "trans": "flash",
+  "cap": "top",
+  "bg": "dots",
+  "font": 3,
+  "mood": "luxury",
+  "cut": "launch",
+  "ac": "hsl(188 88% 62%)"
+ },
+ "qa_overflow": [
+  {
+   "t": 22.4,
+   "overflow": [
+    "ename"
+   ]
+  }
+ ],
+ "page_errors": [],
+ "lufs": "-14.2",
+ "black_segments": 0,
+ "bytes": 8003875,
+ "ok": false
+}
