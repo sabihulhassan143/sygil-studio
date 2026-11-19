@@ -28,11 +28,14 @@ jobs:
         with: { python-version: "3.11" }
       - name: tools
         if: steps.pick.outputs.slugs != ''
-        timeout-minutes: 8
+        timeout-minutes: 25   # was 8: one slow apt mirror on 11-19 killed the whole day's render
         run: |
-          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg fonts-noto-color-emoji > /dev/null
-          pip install -q numpy scipy playwright==1.47.0
-          python -m playwright install --with-deps chromium > /dev/null
+          # each install gets up to 3 tries with a 7-min cap per try, so one hung download can't fail the run
+          retry() { for i in 1 2 3; do timeout 420 "$@" && return 0; echo "::warning::try $i failed: $*"; sleep 20; done; return 1; }
+          retry sudo apt-get -o Acquire::Retries=3 -o Acquire::http::Timeout=30 update -qq
+          retry sudo apt-get -o Acquire::Retries=3 -o Acquire::http::Timeout=30 install -y -qq ffmpeg fonts-noto-color-emoji > /dev/null
+          retry pip install -q --retries 5 --timeout 60 numpy scipy playwright==1.47.0
+          retry python -m playwright install --with-deps chromium > /dev/null
       - name: render
         if: steps.pick.outputs.slugs != ''
         run: |
