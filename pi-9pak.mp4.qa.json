@@ -1,0 +1,20 @@
+{
+ "slug": "pi-9pak",
+ "mood": "playful",
+ "variant": {
+  "order": "how",
+  "hook": "counter",
+  "trans": "punch",
+  "cap": "top",
+  "bg": "stripes",
+  "font": 1,
+  "mood": "playful",
+  "cut": "launch"
+ },
+ "qa_overflow": [],
+ "page_errors": [],
+ "lufs": "-14.1",
+ "black_segments": 0,
+ "bytes": 9130154,
+ "ok": true
+}

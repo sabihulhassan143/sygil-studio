@@ -1,0 +1,21 @@
+{
+ "slug": "cc131",
+ "mood": "trap",
+ "variant": {
+  "order": "how",
+  "hook": "split",
+  "trans": "flash",
+  "cap": "center",
+  "bg": "dots",
+  "font": 0,
+  "mood": "trap",
+  "cut": "launch",
+  "ac": "hsl(221 55% 45%)"
+ },
+ "qa_overflow": [],
+ "page_errors": [],
+ "lufs": "-14.2",
+ "black_segments": 0,
+ "bytes": 7273213,
+ "ok": true
+}

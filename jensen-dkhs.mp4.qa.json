@@ -1,0 +1,28 @@
+{
+ "slug": "jensen-dkhs",
+ "mood": "military",
+ "variant": {
+  "order": "why",
+  "hook": "stamp",
+  "trans": "wipe",
+  "cap": "top",
+  "bg": "rays",
+  "font": 2,
+  "mood": "military",
+  "cut": "launch",
+  "ac": "hsl(82 79% 45%)"
+ },
+ "qa_overflow": [
+  {
+   "t": 22.4,
+   "overflow": [
+    "ename"
+   ]
+  }
+ ],
+ "page_errors": [],
+ "lufs": "-14.2",
+ "black_segments": 0,
+ "bytes": 11607060,
+ "ok": false
+}

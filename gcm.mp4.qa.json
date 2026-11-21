@@ -1,0 +1,21 @@
+{
+ "slug": "gcm",
+ "mood": "chill",
+ "variant": {
+  "order": "how",
+  "hook": "split",
+  "trans": "flash",
+  "cap": "top",
+  "bg": "dots",
+  "font": 3,
+  "mood": "chill",
+  "cut": "launch",
+  "ac": "hsl(37 90% 51%)"
+ },
+ "qa_overflow": [],
+ "page_errors": [],
+ "lufs": "-13.9",
+ "black_segments": 0,
+ "bytes": 7865168,
+ "ok": true
+}

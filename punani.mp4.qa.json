@@ -1,0 +1,21 @@
+{
+ "slug": "punani",
+ "mood": "military",
+ "variant": {
+  "order": "how",
+  "hook": "split",
+  "trans": "flash",
+  "cap": "band",
+  "bg": "dots",
+  "font": 4,
+  "mood": "military",
+  "cut": "launch",
+  "ac": "hsl(29 90% 55%)"
+ },
+ "qa_overflow": [],
+ "page_errors": [],
+ "lufs": "-14.2",
+ "black_segments": 0,
+ "bytes": 7774627,
+ "ok": true
+}

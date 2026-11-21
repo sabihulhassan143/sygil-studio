@@ -1,0 +1,21 @@
+{
+ "slug": "bandana-2",
+ "mood": "chill",
+ "variant": {
+  "order": "why",
+  "hook": "stamp",
+  "trans": "wipe",
+  "cap": "center",
+  "bg": "rays",
+  "font": 0,
+  "mood": "chill",
+  "cut": "launch",
+  "ac": "hsl(46 90% 48%)"
+ },
+ "qa_overflow": [],
+ "page_errors": [],
+ "lufs": "-14.1",
+ "black_segments": 0,
+ "bytes": 11383182,
+ "ok": true
+}

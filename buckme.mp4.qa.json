@@ -1,0 +1,21 @@
+{
+ "slug": "buckme",
+ "mood": "synthwave",
+ "variant": {
+  "order": "how",
+  "hook": "counter",
+  "trans": "punch",
+  "cap": "top",
+  "bg": "stripes",
+  "font": 2,
+  "mood": "synthwave",
+  "cut": "launch",
+  "ac": "hsl(273 79% 53%)"
+ },
+ "qa_overflow": [],
+ "page_errors": [],
+ "lufs": "-14.1",
+ "black_segments": 0,
+ "bytes": 8571133,
+ "ok": true
+}

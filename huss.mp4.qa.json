@@ -1,0 +1,20 @@
+{
+ "slug": "huss",
+ "mood": "synthwave",
+ "variant": {
+  "order": "how",
+  "hook": "counter",
+  "trans": "punch",
+  "cap": "center",
+  "bg": "stripes",
+  "font": 1,
+  "mood": "synthwave",
+  "cut": "launch"
+ },
+ "qa_overflow": [],
+ "page_errors": [],
+ "lufs": "-14.2",
+ "black_segments": 0,
+ "bytes": 8016849,
+ "ok": true
+}

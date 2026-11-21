@@ -1,0 +1,21 @@
+{
+ "slug": "maya",
+ "mood": "trap",
+ "variant": {
+  "order": "why",
+  "hook": "ring",
+  "trans": "glitch",
+  "cap": "top",
+  "bg": "grid",
+  "font": 4,
+  "mood": "trap",
+  "cut": "launch",
+  "ac": "hsl(20 58% 58%)"
+ },
+ "qa_overflow": [],
+ "page_errors": [],
+ "lufs": "-14.4",
+ "black_segments": 0,
+ "bytes": 7465518,
+ "ok": true
+}

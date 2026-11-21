@@ -1,0 +1,20 @@
+{
+ "slug": "singularity",
+ "mood": "trap",
+ "variant": {
+  "order": "how",
+  "hook": "counter",
+  "trans": "punch",
+  "cap": "center",
+  "bg": "stripes",
+  "font": 2,
+  "mood": "trap",
+  "cut": "launch"
+ },
+ "qa_overflow": [],
+ "page_errors": [],
+ "lufs": "-14.2",
+ "black_segments": 0,
+ "bytes": 8374246,
+ "ok": true
+}

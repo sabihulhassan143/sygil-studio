@@ -1,0 +1,28 @@
+{
+ "slug": "patrick",
+ "mood": "military",
+ "variant": {
+  "order": "why",
+  "hook": "ring",
+  "trans": "glitch",
+  "cap": "top",
+  "bg": "grid",
+  "font": 3,
+  "mood": "military",
+  "cut": "launch",
+  "ac": "hsl(2 71% 62%)"
+ },
+ "qa_overflow": [
+  {
+   "t": 22.4,
+   "overflow": [
+    "ename"
+   ]
+  }
+ ],
+ "page_errors": [],
+ "lufs": "-14.4",
+ "black_segments": 0,
+ "bytes": 7961876,
+ "ok": false
+}

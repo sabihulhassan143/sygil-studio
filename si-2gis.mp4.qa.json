@@ -1,0 +1,21 @@
+{
+ "slug": "si-2gis",
+ "mood": "trap",
+ "variant": {
+  "order": "why",
+  "hook": "stamp",
+  "trans": "wipe",
+  "cap": "top",
+  "bg": "rays",
+  "font": 0,
+  "mood": "trap",
+  "cut": "launch",
+  "ac": "hsl(1 75% 45%)"
+ },
+ "qa_overflow": [],
+ "page_errors": [],
+ "lufs": "-14.4",
+ "black_segments": 0,
+ "bytes": 14946845,
+ "ok": true
+}
