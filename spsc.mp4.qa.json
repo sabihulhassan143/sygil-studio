@@ -1,0 +1,28 @@
+{
+ "slug": "spsc",
+ "mood": "trap",
+ "variant": {
+  "order": "how",
+  "hook": "counter",
+  "trans": "punch",
+  "cap": "band",
+  "bg": "stripes",
+  "font": 3,
+  "mood": "trap",
+  "cut": "launch",
+  "ac": "hsl(41 68% 62%)"
+ },
+ "qa_overflow": [
+  {
+   "t": 22.4,
+   "overflow": [
+    "ename"
+   ]
+  }
+ ],
+ "page_errors": [],
+ "lufs": "-14.0",
+ "black_segments": 0,
+ "bytes": 9010936,
+ "ok": false
+}

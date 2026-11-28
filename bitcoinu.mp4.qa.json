@@ -1,0 +1,21 @@
+{
+ "slug": "bitcoinu",
+ "mood": "chill",
+ "variant": {
+  "order": "how",
+  "hook": "counter",
+  "trans": "punch",
+  "cap": "top",
+  "bg": "stripes",
+  "font": 1,
+  "mood": "chill",
+  "cut": "launch",
+  "ac": "hsl(34 77% 50%)"
+ },
+ "qa_overflow": [],
+ "page_errors": [],
+ "lufs": "-14.0",
+ "black_segments": 0,
+ "bytes": 9877549,
+ "ok": true
+}

@@ -1,0 +1,21 @@
+{
+ "slug": "mandy-4hdh",
+ "mood": "military",
+ "variant": {
+  "order": "why",
+  "hook": "stamp",
+  "trans": "wipe",
+  "cap": "top",
+  "bg": "rays",
+  "font": 1,
+  "mood": "military",
+  "cut": "launch",
+  "ac": "hsl(324 81% 56%)"
+ },
+ "qa_overflow": [],
+ "page_errors": [],
+ "lufs": "-14.3",
+ "black_segments": 0,
+ "bytes": 9647895,
+ "ok": true
+}
